@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     logging.info(f"✅ Logged in as {bot.user}")
-    
+
     # Sync slash commands with Discord
     try:
         await bot.tree.sync()
@@ -30,7 +30,7 @@ async def load_extensions():
     cog_files = [f for f in os.listdir("cogs") if f.endswith(".py")]
     for cog in cog_files:
         try:
-            await bot.load_extension(f"cogs.{cog[:-3]}")  # Awaiting the load_extension call inside an async function
+            await bot.load_extension(f"cogs.{cog[:-3]}")  # Ensure this is inside an async function
             logging.info(f"✅ Loaded cog: {cog}")
         except Exception as e:
             logging.error(f"Failed to load cog {cog}: {e}")
