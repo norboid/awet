@@ -14,12 +14,22 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     logging.info(f"✅ Logged in as {bot.user}")
+    
+    # Sync slash commands with Discord
     try:
-        # Sync slash commands with Discord
         await bot.tree.sync()
         logging.info("Slash commands synced successfully")
     except Exception as e:
         logging.error(f"Error syncing slash commands: {e}")
+
+    # Load extensions dynamically after the bot is ready
+    cog_files = [f for f in os.listdir("cogs") if f.endswith(".py")]
+    for cog in cog_files:
+        try:
+            await bot.load_extension(f"cogs.{cog[:-3]}")  # Awaiting the load_extension call inside an async function
+            logging.info(f"✅ Loaded cog: {cog}")
+        except Exception as e:
+            logging.error(f"Failed to load cog {cog}: {e}")
 
 # Error handling for commands
 @bot.event
@@ -29,15 +39,6 @@ async def on_command_error(ctx, error):
         await ctx.send("Sorry, I don't recognize that command.")
     else:
         await ctx.send("An error occurred. Please try again later.")
-
-# Load cogs dynamically from the 'cogs' folder
-cog_files = [f for f in os.listdir("cogs") if f.endswith(".py")]
-for cog in cog_files:
-    try:
-        await bot.load_extension(f"cogs.{cog[:-3]}")  # Awaiting the load_extension call
-        logging.info(f"✅ Loaded cog: {cog}")
-    except Exception as e:
-        logging.error(f"Failed to load cog {cog}: {e}")
 
 # Make sure the Discord token and Hypixel API key are set
 token = os.getenv("DISCORD_TOKEN")
