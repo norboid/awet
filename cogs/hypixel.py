@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import os
 import requests
 
@@ -8,11 +9,12 @@ class Hypixel(commands.Cog):
         self.bot = bot
         self.api_key = os.getenv("HYPIXEL_API_KEY")  # Make sure to set this environment variable
 
-    @commands.command(name="stats")
-    async def stats(self, ctx, minecraft_username: str):
+    @app_commands.command(name="stats", description="Fetches and displays stats for the given Minecraft username")
+    @app_commands.guilds(123456789012345678)  # Replace with your Discord server's ID (optional)
+    async def stats(self, interaction: discord.Interaction, minecraft_username: str):
         """Fetches and displays stats for the given Minecraft username"""
         if not self.api_key:
-            await ctx.send("API key not set. Please check the environment variables.")
+            await interaction.response.send_message("API key not set. Please check the environment variables.")
             return
         
         # Make a request to the Hypixel API to get the player's stats
@@ -21,7 +23,7 @@ class Hypixel(commands.Cog):
         data = response.json()
 
         if not data['success']:
-            await ctx.send(f"Could not find stats for {minecraft_username}. Please check the username.")
+            await interaction.response.send_message(f"Could not find stats for {minecraft_username}. Please check the username.")
             return
         
         player_data = data['player']
@@ -45,8 +47,8 @@ class Hypixel(commands.Cog):
                 stats_embed.add_field(name="BedWars Wins", value=bedwars_stats.get('wins_bedwars', 'N/A'), inline=True)
                 stats_embed.add_field(name="BedWars Kills", value=bedwars_stats.get('kills_bedwars', 'N/A'), inline=True)
 
-        await ctx.send(embed=stats_embed)
+        await interaction.response.send_message(embed=stats_embed)
 
 # Setup function for loading this cog
-def setup(bot):
-    bot.add_cog(Hypixel(bot))
+async def setup(bot):
+    await bot.add_cog(Hypixel(bot))
