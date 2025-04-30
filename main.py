@@ -23,6 +23,10 @@ async def on_ready():
         logging.error(f"Error syncing slash commands: {e}")
 
     # Load extensions dynamically after the bot is ready
+    await load_extensions()
+
+async def load_extensions():
+    """Load extensions (cogs) dynamically"""
     cog_files = [f for f in os.listdir("cogs") if f.endswith(".py")]
     for cog in cog_files:
         try:
@@ -40,7 +44,7 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send("An error occurred. Please try again later.")
 
-# Make sure the Discord token and Hypixel API key are set
+# Make sure the Discord token is set
 token = os.getenv("DISCORD_TOKEN")
 if token is None:
     logging.error("DISCORD_TOKEN is not set in the environment variables.")
