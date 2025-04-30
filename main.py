@@ -13,7 +13,9 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     logging.info(f"✅ Logged in as {bot.user}")
+    # Sync slash commands with Discord
     await bot.tree.sync()
+    logging.info("Slash commands synced")
 
 # Error handling for commands
 @bot.event
