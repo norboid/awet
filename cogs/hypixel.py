@@ -51,5 +51,6 @@ class Hypixel(commands.Cog):
 
 # Setup function for loading this cog
 async def setup(bot):
+    print("Loading Hypixel cog...")
     await bot.add_cog(Hypixel(bot))
-    await bot.tree.sync()  # Ensure slash commands are synced with Discord
+    print("Hypixel cog loaded.")
