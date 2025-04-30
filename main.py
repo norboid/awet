@@ -8,14 +8,18 @@ logging.basicConfig(level=logging.INFO)
 
 # Ensure the bot has the necessary intents
 intents = discord.Intents.default()
+intents.message_content = True  # Enable message content intent
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
     logging.info(f"✅ Logged in as {bot.user}")
-    # Sync slash commands with Discord
-    await bot.tree.sync()
-    logging.info("Slash commands synced")
+    try:
+        # Sync slash commands with Discord
+        await bot.tree.sync()
+        logging.info("Slash commands synced successfully")
+    except Exception as e:
+        logging.error(f"Error syncing slash commands: {e}")
 
 # Error handling for commands
 @bot.event
@@ -30,7 +34,7 @@ async def on_command_error(ctx, error):
 cog_files = [f for f in os.listdir("cogs") if f.endswith(".py")]
 for cog in cog_files:
     try:
-        bot.load_extension(f"cogs.{cog[:-3]}")  # Load cogs by filename without the '.py' extension
+        await bot.load_extension(f"cogs.{cog[:-3]}")  # Awaiting the load_extension call
         logging.info(f"✅ Loaded cog: {cog}")
     except Exception as e:
         logging.error(f"Failed to load cog {cog}: {e}")
